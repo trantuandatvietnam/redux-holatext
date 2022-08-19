@@ -1,70 +1,95 @@
-# Getting Started with Create React App
+# Redux
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Redux là gì?
 
-## Available Scripts
+1. Redux là một PATTERN (Khuôn mẫu)
 
-In the project directory, you can run:
+- Là một thư viện dùng để quản lý và cập nhật state của ứng dụng (State ở đây là trạng thái, dữ liệu ở trong ứng dụng). redux sử dụng những sự kiện (được gọi là các actions) nó hoạt động như một kho lưu trữ tập chung cho các state được sử dụng ở component và nhiều nơi khác nhau trong ứng dụng
 
-### `npm start`
+2. Tại sao phải sử dụng Redux
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Giúp quản lý các global state
+- Mọi nơi có thể truy xuất và cập nhật
+- Giải quyết vấn đề của redux khi truyễn dữ liệu xuống các cấp con cháu, hoặc các component không có sự liên kết
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+3. Dễ dàng debug
 
-### `npm test`
+- Redux hướng chúng ta tới viết code một cách pridictation (Có thể dự toán) và có thể testable(Có thể test)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+4. Xử lý catching dữ liệu từ phía server
+5. Vì sao phải sử dụng redux toolkit
 
-### `npm run build`
+- Redux Toolkit cũng là một thư viện JS và nó sẽ bọc bên ngoài của redux core và nó sẽ chứa các package, function cần thiết khi chúng ta
+- Redux Toolkit sinh ra để giải quyết các vấn đề với redux core
+  - Việc cấu hình với redux phức tạp
+  - Phải cài đặt thủ công nhiều packages để Redux có thể hoạt động hiệu quả
+  - Redux yêu cầu rất nhiều boilerplate code (Code lặp đi lặp lại rất nhiều lần)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+6. Khi nào khi sử dụng redux
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- Dự án có số lượng lớn state, và các state được cập nhật ở nhiều nơi
+- State được cập nhật thường xuyên
+- Logic code cập nhật state rất phức tạp (Call api và cập nhật state khi có phản hồi từ server)
+- Ứng dụng có số lượng lớn code trung bình hoặc lớn và có nhiều người làm chung
+- Cần debug và xem cách state cập nhật ở bất kì khoảng thời gian nào
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+=> Không phải lúc nào cũng sử dụng Redux (Không nên sử dụng redux cho đến khi gặp vấn đề khi sử dụng redux thuần)
 
-### `npm run eject`
+7. Kiến trúc của Redux
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- State managment: là khái niệm chung trong một ứng dụng Frontend, quản lý các trạng thái, dữ liệu trong ứng dụng của chúng ta
+  ![State Managment](./imgs/redux-concept.jpg)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- React hoạt động theo mô hình một chiều (one way data flow): Từ dữ liệu trong State => Nó render ra view => Khi thực hiện một hành động => Nó cập nhật lại State => State được cập nhật thì nó lại cập nhật lại view...
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+![One way data flow](./imgs/one-way-data-flow.png)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+8. Immutability (Bất biến)
+   ![Immutability](./imgs/immutability.jpg)
 
-## Learn More
+- Không nên thay đổi State trong redux một cách trực tiếp, nó có thể gây ra một số bug như:
+  - UI, phía giao diện không thể cập nhật chính xác theo dữ liệu mới nhất
+  - Không hiểu tại sao, bằng cách nào một state được cập nhật
+  - Viết test khó
+  - Phá vỡ khả năng time travel debug, quy tắc của redux
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+9. Kiến trúc của redux
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+![Redux Architecture](./imgs/redux%20architecture.gif)
 
-### Code Splitting
+- Reducers: Là một function nhận vào hai tham số (state, action): function này được sử dụng để cập nhật lại giá trị state ở trong kho chung
+  - state có một giá trị khởi tạo
+  - Không được thay đổi trực tiếp giá trị state mà phải tạo ra một phiên bản coppy của nó
+  - Không được có một đoạn code bất đồng bộ nào ở trong reducer
+  - Không được sử dụng các hàm tạo giá trị ngẫu nhiên như `Math.random()`, `Date.now()` (1)
+  - Không sử dụng các hành động Side Effect - VD thực hiện request tới server (Sau đó nhận dữ liệu trả về từ server - những dữ liệu này ta không thể đoán trước được) (2)
+  - Hành động (1) và (2) không nên sử dụng trong redux vì nó tạo ra các giá trị ngẫu nhiên ta không thể đoán trước được hoặc ta không biết dữ liệu trả về từ server là gì, vì thế nó vi phạm quy tắc predictable của redux
+  - Side Effect là những thứ không thể đoán trước được bởi vì nó được thực hiện bởi thế giới bên ngoài
+  - Một function tuân theo những quy tắc trên được gọi là pure function
+- Action: Đơn giản là một object, nó nên có 2 fields là type và payload (Có thể có hoặc không)
+  - Action creators (function tạo ra action): Lợi ích của nó là không phải tạo ra các action object nhiều lần và hạn chế hard code
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```js
+const increamentCreator = (data) => {
+  return {
+    type: "todoList/increament",
+    payload: data,
+  };
+};
+```
 
-### Analyzing the Bundle Size
+- Dispatch: Là một function: Giúp cập nhật state thông qua function dispatch, nó nhận vào một action object (Từ phía UI khi thực hiện một điều gì đó nó sẽ bắn đi một action object với dữ liệu mà ta mô tả trong object này => Nó đi vào reducer và thực hiện cập nhật)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Thực hành với redux core
 
-### Making a Progressive Web App
+- Để sử dụng redux core cần down 2 package là `react-redux` và `redux`
+- Để xem được dữ liệu trên dev-tools cần cài đặt `npm i redux-devtools-extension`
+- Lưu ý khi sử dụng useSelector, mỗi lần sử dụng dữ liệu trong redux thì ta lại phải sử dụng: `const data = useSelector(state => state.todoList)`
+  => Làm như này sẽ lặp code rất nhiều khi ta muốn sử dụng cùng một dữ liệu tại nhiều component khác nhau, thì thao tác trên bị lặp lại nhiều lần => Giải pháp ở đây là tạo một hàm để dùng chung như sau:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```js
+// selectors.js
+export const todoListSelector = (state) => state.todoList;
+// trong file sử dụng dữ liệu:
+const todoList = useSelector(todoListSelector);
+```
