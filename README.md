@@ -88,8 +88,34 @@ const increamentCreator = (data) => {
   => Làm như này sẽ lặp code rất nhiều khi ta muốn sử dụng cùng một dữ liệu tại nhiều component khác nhau, thì thao tác trên bị lặp lại nhiều lần => Giải pháp ở đây là tạo một hàm để dùng chung như sau:
 
 ```js
-// selectors.js
-export const todoListSelector = (state) => state.todoList;
-// trong file sử dụng dữ liệu:
-const todoList = useSelector(todoListSelector);
+export const todoListSelector = (state) => {
+  const todoRemaining = state.todoList.filter((todo) => {
+    return todo.name.toLowerCase().includes(state.filters.search.toLowerCase());
+  });
+  return todoRemaining;
+};
+export const searchSelector = (state) => state.filters.search;
 ```
+
+- Tuy nhiên khi code kiểu như trên thì ta thấy dòng `state.filters.search` xuất hiện nhiều lần, điều này là không nên khi sử dụng trong dự án của chúng ta vì khi muốn sửa đổi thì phải sửa ở rất nhiều nơi, vì thế ta sử dụng một cái được gọi là reselect (Thư viện này có sẵn trong redux toolkit, tuy nhiên mình đang làm ví dụ về redux core nên cần cài đặt nó theo cú pháp `npm i reselect`)
+
+=> Code lúc này trở thành như sau:
+
+```js
+import { createSelector } from "reselect";
+
+export const todoListSelector = (state) => state.todoList;
+export const searchSelector = (state) => state.filters.search;
+
+export const todoRemainingSelector = createSelector(
+  todoListSelector,
+  searchSelector,
+  (todoList, searchTextSelector) => {
+    return todoList.filter((todo) => {
+      return todo.name.toLowerCase().includes(searchTextSelector.toLowerCase());
+    });
+  }
+);
+```
+
+- createSelector chứa các tham số là các selector phụ thuộc, cuối cùng là một callback nhận vào giá trị trả về của các phụ thuộc.
