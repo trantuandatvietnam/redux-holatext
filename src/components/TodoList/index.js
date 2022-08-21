@@ -1,18 +1,16 @@
-import { Col, Row, Input, Button, Select, Tag } from "antd";
+import { Button, Col, Input, Row, Select, Tag } from "antd";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addTodo } from "../../redux/actions";
-import Todo from "../Todo";
 import { v4 as uuidv4 } from "uuid";
-import { useEffect, useState } from "react";
-import { searchSelector, todoListSelector } from "../../redux/selectors";
+import { addTodo } from "../../redux/actions";
+import { todoRemainingSelector } from "../../redux/selectors";
+import Todo from "../Todo";
 
 export default function TodoList() {
   const dispatch = useDispatch();
   const [todoName, setTodoName] = useState("");
   const [prioriry, setPrioriry] = useState("Medium");
-  const [todoList, setTodoList] = useState([]);
-  const todoListFromStore = useSelector(todoListSelector);
-  const search = useSelector(searchSelector);
+  const todoList = useSelector(todoRemainingSelector);
 
   const handleAddButtonClick = () => {
     dispatch(
@@ -30,26 +28,18 @@ export default function TodoList() {
     setPrioriry(value);
   };
 
-  useEffect(() => {
-    const todoData = todoListFromStore.filter((todo) => {
-      const isMatch = todo.name.toLowerCase().includes(search.toLowerCase());
-      return isMatch;
-    });
-    setTodoList(todoData);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search]);
-
-  useEffect(() => {
-    if (todoListFromStore.length < 0) return;
-    setTodoList(todoListFromStore);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
   return (
     <Row style={{ height: "calc(100% - 40px)" }}>
       <Col span={24} style={{ height: "calc(100% - 40px)", overflowY: "auto" }}>
         {todoList.length > 0 ? (
-          todoList.map((todo) => (
-            <Todo key={todo.id} name={todo.name} prioriry={todo.prioriry} />
+          todoList.map((todo, index) => (
+            <Todo
+              index={index}
+              key={todo.id}
+              name={todo.name}
+              prioriry={todo.prioriry}
+              completed={todo.completed}
+            />
           ))
         ) : (
           <span>Không có công việc nào phù hợp</span>
