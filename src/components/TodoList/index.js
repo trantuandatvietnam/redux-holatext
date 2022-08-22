@@ -34,7 +34,7 @@ export default function TodoList() {
         {todoList.length > 0 ? (
           todoList.map((todo, index) => (
             <Todo
-              index={index}
+              todoId={todo.id}
               key={todo.id}
               name={todo.name}
               prioriry={todo.prioriry}

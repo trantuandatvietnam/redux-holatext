@@ -101,6 +101,8 @@ export const searchSelector = (state) => state.filters.search;
 
 => Code lúc này trở thành như sau:
 
+- createSelector chứa các tham số là các selector phụ thuộc, cuối cùng là một callback nhận vào giá trị trả về của các phụ thuộc.
+
 ```js
 import { createSelector } from "reselect";
 
@@ -116,6 +118,30 @@ export const todoRemainingSelector = createSelector(
     });
   }
 );
-```
 
-- createSelector chứa các tham số là các selector phụ thuộc, cuối cùng là một callback nhận vào giá trị trả về của các phụ thuộc.
+// HOẶC
+export const todoRemainingSelector = createSelector(
+  todoListSelector,
+  searchSelector,
+  filterStatusSelector,
+  priorityStatusSelector,
+  (todoList, searchTextSelector, status, priorities) => {
+    return todoList.filter((todo) => {
+      let statusFilter = "All";
+      if (status === "Completed") {
+        statusFilter = true;
+      }
+      if (status === "Todo") {
+        statusFilter = false;
+      }
+      const prioriryFilter =
+        priorities.length > 0 ? priorities.includes(todo.prioriry) : true;
+      const isMatch =
+        todo.name.toLowerCase().includes(searchTextSelector.toLowerCase()) &&
+        (statusFilter === "All" ? true : todo.completed === statusFilter) &&
+        prioriryFilter;
+      return isMatch;
+    });
+  }
+);
+```

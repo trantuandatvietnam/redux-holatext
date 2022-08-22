@@ -5,10 +5,10 @@ export const addTodo = (data) => {
   };
 };
 
-export const statusTodoChange = (status) => {
+export const statusTodoChange = (todoId) => {
   return {
     type: "todoList/statusTodoChange",
-    payload: status,
+    payload: todoId,
   };
 };
 

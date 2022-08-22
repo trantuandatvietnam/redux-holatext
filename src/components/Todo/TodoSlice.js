@@ -23,9 +23,10 @@ const todoListReducer = (state = initState, action) => {
     case "todoList/addTodo":
       return [...state, action.payload];
     case "todoList/statusTodoChange": {
-      const { index, checked } = action.payload;
+      const todoId = action.payload;
+      const index = state.findIndex((item) => item.id === todoId);
       const newTodoList = [...state];
-      newTodoList[index].completed = checked;
+      newTodoList[index].completed = !newTodoList[index].completed;
       return newTodoList;
     }
     default:
