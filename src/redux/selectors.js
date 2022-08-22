@@ -1,6 +1,6 @@
 import { createSelector } from "@reduxjs/toolkit";
 
-export const todoListSelector = (state) => state.todoList;
+export const todoListSelector = (state) => state.todoList.todoList;
 export const searchSelector = (state) => state.filters.search;
 export const filterStatusSelector = (state) => state.filters.status;
 export const priorityStatusSelector = (state) => state.filters.prioriry;

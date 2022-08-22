@@ -1,25 +1,9 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-const initialState = [
-  {
-    id: 1,
-    name: "Learn yoga",
-    completed: false,
-    prioriry: "Medium",
-  },
-  {
-    id: 2,
-    name: "Learning",
-    completed: false,
-    prioriry: "Medium",
-  },
-  {
-    id: 3,
-    name: "Learn Gym",
-    completed: true,
-    prioriry: "High",
-  },
-];
+const initialState = {
+  status: "idle",
+  todoList: [],
+};
 
 const todoSlice = createSlice({
   name: "todo",
@@ -34,6 +18,32 @@ const todoSlice = createSlice({
       state[index].completed = !state[index].completed;
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchTodos.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(fetchTodos.fulfilled, (state, action) => {
+        state.todoList = action.payload;
+        state.status = "idle";
+      });
+  },
+});
+
+// export function addTodoThunkCreator(todo) {
+//   // thunk function - thunk action
+//   return function addTodosThunk(dispatch, getState) {
+//     console.log({ todo });
+//     todo.name = "Hello, you passed middleware";
+//     dispatch(todoSlice.actions.addTodo(todo));
+//   };
+// }
+
+export const fetchTodos = createAsyncThunk("todos/fetchTodos", async () => {
+  const res = await fetch("/api/todoList");
+  const data = await res.json();
+  console.log(data);
+  return res.todoList || [];
 });
 
 const { reducer } = todoSlice;

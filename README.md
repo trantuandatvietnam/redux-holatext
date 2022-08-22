@@ -102,6 +102,7 @@ export const searchSelector = (state) => state.filters.search;
 => Code lúc này trở thành như sau:
 
 - createSelector chứa các tham số là các selector phụ thuộc, cuối cùng là một callback nhận vào giá trị trả về của các phụ thuộc.
+- Sử dụng createSelector giúp cải thiện về mặt performance vì chỉ khi nào những dependence của nó thay đổi thì nó mới render lại thôi
 
 ```js
 import { createSelector } from "reselect";
@@ -180,3 +181,51 @@ function searchFilterChange() {
 
 - Ta nhớ rằng, trong redux-core thì trong mỗi reducer nó sẽ phải return một state mới để cập nhật state hiện tại, đặc biệt state này không được chỉnh sửa trực tiếp, tuy nhiên đối với redux-toolkit thì chúng ta có thể chỉnh sửa theo kiểu mutable(Thao tác trực tiếp trên một state mà không cần phải clone), bản chất là bên dưới redux-toolkit vẫn phải tạo ra một state mới thôi, nhưng nó cho phép chúng ta viết như kiểu imutable (Thực tế nó không chạy như thế) bởi vì nó sử dụng một thư viện được gọi là Immer
 - Lưu ý: Trong một reducer sử dụng redux toolkit chúng ta có thể sử dụng 100% kiểu mutable nha
+
+### Redux Thunk
+
+- Đây là một redux middleware rất hữu ích giúp chúng ta có thể sử lý bất đồng bộ trong redux
+
+- Bài tập sử dụng thư viện Mirage để tạo ra API giả
+
+  - Cú pháp cài đặt như sau: `npm i --save-dev miragejs`
+
+- Redux middleware là gì?
+
+  - Redux middleware nó sinh ra để chúng ta có thể giải quyết các đoạn logic bất đồng bộ ở trong redux, chúng ta đã biết được rằng trong các reducer, store không được phép tồn tại bất kì một cái bất đồng bộ nào, hoặc là các side effect (Các tác vụ thực hiện bên ngoài)
+  - Middleware được thực hiện giữa action gửi tới store, xem hình ảnh sau:
+
+  ![Middleware](./imgs/redux%20architecture.gif)
+
+  - Middleware nó đơn giản là một function, middleware này nhận vào hai tham số: Thứ nhất là `dispatch`, thứ hai là `getStore`.
+    - `dispatch` chính là `dispatch` của redux, nó sẽ dispatch một action
+    - `getState`: trả ra tất cả giá trị hiện tại trong store
+  - Thay vì chúng ta `dispatch(action)` thì chúng ta sẽ `dispatch(thunk action)` `thunk action` hay còn gọi là `thunk function` trong `thunk function` chúng ta mới dispatch một action thực sự
+  - Ngoài ra còn có redux middleware như redux saga (mang lại kết quả tương tự)
+
+```js
+export function addTodoThunkCreator(todo) {
+  // thunk function - thunk action
+  return function addTodosThunk(dispatch, getState) {
+    console.log({ todo });
+    todo.name = "Hello, you passed middleware";
+    dispatch(todoSlice.actions.addTodo(todo));
+  };
+}
+```
+
+- Ta có:
+  - `action(object) và action creators() => {return action}`
+  - `thunk action (là một function) và thunk creators () => {return thunk action}`
+- Trong Redux toolkit có createAsyncThunk để tạo ra một thunk function
+
+```js
+export const fetchTodos = createAsyncThunk("todos/fetchTodos", async () => {
+  const res = await fetch("/api/todos");
+  return res.todoList;
+});
+// Mỗi một createAsyncThunk sẽ tạo cho chúng ta 3 actions tương ứng
+// todos/fetchTodos/pending
+// todos/fetchTodos/fullfilled
+// todos/fetchTodos/rejected
+```
