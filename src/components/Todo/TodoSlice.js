@@ -1,4 +1,6 @@
-const initState = [
+import { createSlice } from "@reduxjs/toolkit";
+
+const initialState = [
   {
     id: 1,
     name: "Learn yoga",
@@ -18,20 +20,23 @@ const initState = [
     prioriry: "High",
   },
 ];
-const todoListReducer = (state = initState, action) => {
-  switch (action.type) {
-    case "todoList/addTodo":
-      return [...state, action.payload];
-    case "todoList/statusTodoChange": {
+
+const todoSlice = createSlice({
+  name: "todo",
+  initialState,
+  reducers: {
+    addTodo: (state, action) => {
+      state.push(action.payload);
+    },
+    statusTodoChange: (state, action) => {
       const todoId = action.payload;
       const index = state.findIndex((item) => item.id === todoId);
-      const newTodoList = [...state];
-      newTodoList[index].completed = !newTodoList[index].completed;
-      return newTodoList;
-    }
-    default:
-      return state;
-  }
-};
+      state[index].completed = !state[index].completed;
+    },
+  },
+});
 
-export default todoListReducer;
+const { reducer } = todoSlice;
+export const { addTodo, statusTodoChange } = todoSlice.actions;
+
+export default reducer;

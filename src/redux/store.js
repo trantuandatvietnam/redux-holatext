@@ -1,9 +1,13 @@
-import { createStore } from "redux";
-import { composeWithDevTools } from "redux-devtools-extension";
-import rootReducer from "./reducer";
+import { configureStore } from "@reduxjs/toolkit";
+import filtersReducer from "../components/Filters/filtersSlice";
+import todoListReducer from "../components/Todo/todoSlice";
 
-const composeEnhancers = composeWithDevTools();
 // REDUX TOOLKIT
-const store = createStore(rootReducer, composeEnhancers); // Phải có dòng này thì dev tool trên trình duyệt mới có thể sử dụng được
+const store = configureStore({
+  reducer: {
+    filters: filtersReducer,
+    todoList: todoListReducer,
+  },
+});
 
 export default store;

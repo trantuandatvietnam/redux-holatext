@@ -145,3 +145,38 @@ export const todoRemainingSelector = createSelector(
   }
 );
 ```
+
+### REDUX TOOLKIT
+
+- Cải tiến của redux toolkit
+- Cú pháp cài đặt: `npm install @reduxjs/toolkit`
+
+- Giải thích đoạn code sau:
+
+```js
+const filtersSlice = createSlice({
+  name: "filters",
+  initialState,
+  reducers: {
+    searchFilterChange: (state, ation) => {},
+    statusFilterChange: (state, ation) => {},
+    priorityFilterChange: (state, ation) => {},
+  },
+});
+```
+
+- Mỗi một field trong reducer nó sẽ tự động tạo ra một action creator
+  VD:
+
+```js
+function searchFilterChange() {
+  return {
+    type: "filter/searchFilterChange", // Chuỗi này được tạo ra theo quy luật `name/fieldName` => Vì thế cần chỉ định cho mỗi slice một name
+  };
+}
+```
+
+=> Chúng ta không cần phải tạo ra thêm một actions nữa mà thằng redux toolkit sẽ tự động tạo ra cho chúng ta một action phụ thuộc vào name và field
+
+- Ta nhớ rằng, trong redux-core thì trong mỗi reducer nó sẽ phải return một state mới để cập nhật state hiện tại, đặc biệt state này không được chỉnh sửa trực tiếp, tuy nhiên đối với redux-toolkit thì chúng ta có thể chỉnh sửa theo kiểu mutable(Thao tác trực tiếp trên một state mà không cần phải clone), bản chất là bên dưới redux-toolkit vẫn phải tạo ra một state mới thôi, nhưng nó cho phép chúng ta viết như kiểu imutable (Thực tế nó không chạy như thế) bởi vì nó sử dụng một thư viện được gọi là Immer
+- Lưu ý: Trong một reducer sử dụng redux toolkit chúng ta có thể sử dụng 100% kiểu mutable nha

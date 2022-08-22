@@ -2,9 +2,9 @@ import { Button, Col, Input, Row, Select, Tag } from "antd";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
-import { addTodo } from "../../redux/actions";
 import { todoRemainingSelector } from "../../redux/selectors";
 import Todo from "../Todo";
+import { addTodo } from "../Todo/todoSlice";
 
 export default function TodoList() {
   const dispatch = useDispatch();
@@ -32,7 +32,7 @@ export default function TodoList() {
     <Row style={{ height: "calc(100% - 40px)" }}>
       <Col span={24} style={{ height: "calc(100% - 40px)", overflowY: "auto" }}>
         {todoList.length > 0 ? (
-          todoList.map((todo, index) => (
+          todoList.map((todo) => (
             <Todo
               todoId={todo.id}
               key={todo.id}
