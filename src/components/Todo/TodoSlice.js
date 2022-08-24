@@ -26,6 +26,15 @@ const todoSlice = createSlice({
       .addCase(fetchTodos.fulfilled, (state, action) => {
         state.todoList = action.payload;
         state.status = "idle";
+      })
+      .addCase(addNewTodos.fulfilled, (state, action) => {
+        state.todoList.push(action.payload);
+      })
+      .addCase(updateTodo.fulfilled, (state, action) => {
+        const indexUpdate = state.todoList.findIndex(
+          (item) => item.id === action.payload.id
+        );
+        state.todoList[indexUpdate] = action.payload;
       });
   },
 });
@@ -42,9 +51,32 @@ const todoSlice = createSlice({
 export const fetchTodos = createAsyncThunk("todos/fetchTodos", async () => {
   const res = await fetch("/api/todoList");
   const data = await res.json();
-  console.log(data);
-  return res.todoList || [];
+  return data.todos || [];
 });
+
+export const addNewTodos = createAsyncThunk(
+  "todos/addNewTodos",
+  async (todoData) => {
+    const res = await fetch("/api/todoList", {
+      method: "POST",
+      body: JSON.stringify(todoData),
+    });
+    const data = await res.json();
+    return data.todos;
+  }
+);
+
+export const updateTodo = createAsyncThunk(
+  "todos/updateTodo",
+  async (updatedTodo) => {
+    const res = await fetch("/api/updateTodo", {
+      method: "POST",
+      body: JSON.stringify(updatedTodo),
+    });
+    const data = await res.json();
+    return data.todos;
+  }
+);
 
 const { reducer } = todoSlice;
 export const { addTodo, statusTodoChange } = todoSlice.actions;
